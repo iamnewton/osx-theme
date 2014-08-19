@@ -1,0 +1,289 @@
+#!/usr/bin/env bash
+
+# osx-theme eighties dark => uses eighties dark style
+# osx-theme eighties light => uses eighties light style
+# osx-theme eighties black => uses eighties light style
+# osx-theme eighties => uses eighties light style
+# osx-theme --what 'eighties' => errors out as invalid option
+# osx-theme => uses default theme
+
+
+# constants
+readonly PROGNAME=$(basename $0)
+readonly PROGDIR=$(dirname $0)
+readonly VERSION=$(cat "$PROGDIR/VERSION.md")
+readonly TODAY=$(date +"%m-%d-%y")
+readonly ARGS="$@"
+readonly DEFAULT_STYLE="light"
+readonly DEFAULT_THEME="eighties"
+readonly GENERATOR="$PROGDIR/lib/theme-generator"
+readonly THEMES_DIR="$GENERATOR/conf"
+readonly THEMES_OUTPUT="$GENERATOR/tmp"
+
+# utility functions
+_is_empty() {
+	local var=$1
+	[[ -z $var ]]
+}
+_is_not_empty() {
+	local var=$1
+	[[ -n $var ]]
+}
+_exists() {
+	local var=$1
+	[[ -e $var ]]
+}
+is_file() {
+	local file=$1
+	[[ -f $file ]]
+}
+_is_dir() {
+	local dir=$1
+	[[ -d $dir ]]
+}
+_is_not_valid_option() {
+	local option=$1
+	printf "bash: %s: %s: invalid option\n" "$PROGNAME" "$option"
+}
+_print_error() {
+	local message=$1
+	printf "%s⊘ Error:%s %s. Aborting!\n\n" "$(tput setaf 1)" "$(tput sgr0)" "$message"
+}
+_require_prog() {
+	local prog=$1
+	local msg=$2
+	local url=$3
+	type -P "$prog" >/dev/null || {
+		_print_error "$msg"
+		echo "Download it at $url"
+		exit 2
+	}
+}
+_usage() {
+	printf "%s: usage: %s [-h|--help] [--prefix] [--style [dark|light]] [-v|--version] %stheme%s\n"  "$PROGNAME" "$PROGNAME" "$(tput smul)" "$(tput rmul)"
+}
+_print_help() {
+	cat <<- EOF
+	usage: $PROGNAME [options]
+
+	Switch the theme for all themeable applications
+
+	OPTIONS:
+	    -h --help              Show this help
+	    -t --test              Run unit test to check the program
+	    -v --version           Display dotfiles version
+	    --prefix               Display dotfiles install path. Default: /usr/local/opt/dotfiles
+
+	Examples:
+	    Run all tests:
+	    $PROGNAME --test
+
+	    Print current version:
+	    $PROGNAME --version
+
+	    Run:
+	    $PROGNAME
+	
+	More Information:
+	    Documentation can be found at https://github.com/chrisopedia/osx-theme
+	EOF
+}
+_print_directory() {
+	echo "$PROGDIR"
+}
+_edit() {
+	cd "$PROGDIR" \
+	&& vim
+}
+_is_valid_theme() {
+	local theme=$1
+	if $(find $THEMES_DIR -name "*$theme*") &> /dev/null; then
+		return 0
+	fi
+	return 1
+}
+_run_tests() {
+	_require_prog roundup "Roundup is required to run tests" https://github.com/bmizerany/roundup \
+	&& roundup ./tests/*.sh
+}
+_version() {
+	printf 'Version %s\n' "$VERSION"
+}
+
+# options
+cmdline() {
+	# got this idea from here:
+	# http://kirk.webfinish.com/2009/10/bash-shell-script-to-use-getopts-with-gnu-style-long-positional-parameters/
+	local arg=
+	for arg
+	do
+		local delim=""
+		case "$arg" in
+			#translate --gnu-long-options to -g (short options)
+			--edit)         args="${args}-e ";;
+			--help)         args="${args}-h ";;
+			--prefix)       args="${args}-p ";;
+			--test)         args="${args}-t ";;
+			--version)      args="${args}-v ";;
+			#pass through anything else
+			*) [[ "${arg:0:1}" == "-" ]] || delim="\""
+				args="${args}${delim}${arg}${delim} ";;
+		esac
+	done
+
+	#Reset the positional parameters to the short options
+	eval set -- $args
+
+	while getopts ":ehptv" OPTION
+	do
+		case $OPTION in
+			e)
+				_edit
+				exit 0
+				;;
+			h)
+				_print_help
+				exit 0
+				;;
+			p)
+				_print_directory
+				exit 0
+				;;
+			t)
+				_run_tests
+				exit 0
+				;;
+			v)
+				_version
+				exit 0
+				;;
+			\?)
+				_is_not_valid_option "$args"
+				_usage
+				exit 1
+				;;
+		esac
+	done
+
+	return 0
+}
+
+set_style() {
+	local style
+	for arg in $ARGS;
+	do
+		case "$arg" in
+			dark|light)
+				style=$arg
+				;;
+			*)
+				style=$DEFAULT_STYLE
+				;;
+		esac
+	done
+	echo $style
+}
+set_theme() {
+	local theme=$DEFAULT_THEME
+	for arg in $ARGS;
+	do
+		_is_valid_theme $arg \
+		&& theme=$arg
+	done
+	echo $theme
+}
+generate_theme() {
+	local theme=$1
+	# Create new theme files
+	bash -c $("$GENERATOR/bin/base16" "$THEMES_DIR/$theme") &> /dev/null
+}
+
+set_programs_theme() {
+	local theme=$1
+	local style=$2
+	# Alfred2
+	# open "$THEMES_OUTPUT/base16-$theme-$style.alfredappearance"
+	# Atom
+	# BBEdit
+	# Chrome Dev Tools
+	#rm -rf "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/*"
+	#ln -s "$THEMES_OUTPUT/chrome-devtools/base16-$theme.$style.css" "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/Custom.css"
+	# codemirror
+	# console2
+	# drracket
+	# emacs
+	# geany
+	# gedit
+	# gimp-palette
+	# gnome-terminal
+	# guake
+	# highlight.js
+	# idea
+	# ipython-notebook
+	# iterm2
+	open "$HOME/Applications/iTerm.app"
+	sleep 10
+	open "$THEMES_OUTPUT/iterm2/base16-$theme.$style.256.itermcolors"
+	# konsole
+	# marked2
+	rm -rf "$HOME/Library/Application Support/Marked/Custom CSS/*"
+	ln -s "$THEMES_OUTPUT/marked/base16-$theme.css" "$HOME/Library/Application Support/Marked/Custom CSS/"
+	# mate-terminal
+	# mintty
+	# mmdc2
+	# mou
+	# notepad-plus-plus
+	# osx color palette
+	rm -rf "$HOME/Library/*.clr"
+	ln -s "$THEMES_OUTPUT/osx-color-palette/base16-$theme.clr" "$HOME/Library/Colors/"
+	# prettify.js
+	# preview
+	# prism
+	# putty
+	# pygments
+	# qtcreator
+	# rainbow
+	# rouge
+	# secure-shell
+	# shell
+	# terminal-app
+	open "$THEMES_OUTPUT/terminal-app/base16-$theme.$style.256.terminal"
+	sleep 10
+	defaults write com.apple.terminal "Default Window Settings" -string "base16-$theme.$style.256"
+	defaults write com.apple.terminal "Startup Window Settings" -string "base16-$theme.$style.256"
+	# terminator
+	# termite
+	# textadept
+	# textmate
+	# vconsole
+	# vim
+	rm -rf "$HOME/.vim/settings/theme.vim"
+	echo "set background=${style}" >> "$HOME/.vim/settings/theme.vim"
+	echo "silent! colorscheme base16-$theme" >> "$HOME/.vim/settings/theme.vim"
+	# visual-studio
+	# windows-command-prompt
+	# xcode4
+	mkdir -p "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+	rm -rf "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/*"
+	ln -s "$THEMES_OUTPUT/xcode4/base16-$theme.$style.dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/"
+	# xfce4-terminal
+	# xresources
+	# zathura
+}
+
+main() {
+	cmdline $ARGS
+
+	local style=$(set_style)
+	local theme=$(set_theme)
+
+	if _is_valid_theme $theme; then
+		generate_theme $theme
+	else
+		_print_error "No such theme '$theme' found"
+		exit 1
+	fi
+	set_programs_theme $theme $style
+}
+
+main

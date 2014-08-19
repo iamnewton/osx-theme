@@ -1,0 +1,3 @@
+[submodule "lib/theme-generator"]
+	path = lib/theme-generator
+	url = https://github.com/chrisopedia/base16-builder.git
