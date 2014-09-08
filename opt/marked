@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set_marked_theme() {
+	local dir=$1
+	local theme=$2
+
+	rm -rf "$HOME/Library/Application Support/Marked/Custom CSS/*"
+	ln -s "${dir}/marked/base16-${theme}.css" "$HOME/Library/Application Support/Marked/Custom CSS/"
+}
+
+set_marked_theme "$@"

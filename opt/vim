@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set_vim_theme() {
+	shift
+	local theme=$1
+	local style=$2
+
+	rm -rf "$HOME/.vim/settings/theme.vim"
+	echo "set background=${style}" >> "$HOME/.vim/settings/theme.vim"
+	echo "silent! colorscheme base16-${theme}" >> "$HOME/.vim/settings/theme.vim"
+}
+
+set_vim_theme "$@"

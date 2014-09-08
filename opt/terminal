@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set_terminal_theme() {
+	local dir=$1
+	local theme=$2
+	local style=$3
+
+	open "${dir}/terminal-app/base16-${theme}.${style}.256.terminal"
+	sleep 10
+	defaults write com.apple.terminal "Default Window Settings" -string "base16-${theme}.${style}.256"
+	defaults write com.apple.terminal "Startup Window Settings" -string "base16-${theme}.${style}.256"
+}
+
+set_terminal_theme "$@"

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set_osx_color_palette_theme() {
+	local dir=$1
+	local theme=$2
+
+	rm -rf "$HOME/Library/*.clr"
+	ln -s "${dir}/osx-color-palette/base16-${theme}.clr" "$HOME/Library/Colors/"
+}
+
+set_osx_color_palette_theme "$@"
+

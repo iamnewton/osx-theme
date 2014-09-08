@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set_alfred() {
+	local dir=$1
+	local theme=$2
+	local style=$3
+
+	open "${dir}/base16-${theme}-${style}.alfredappearance"
+}
+
+set_alfred_theme "$@"

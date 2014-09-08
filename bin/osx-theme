@@ -7,10 +7,9 @@
 # osx-theme --what 'eighties' => errors out as invalid option
 # osx-theme => uses default theme
 
-
 # constants
-readonly PROGNAME=$(basename $0)
-readonly PROGDIR=$(dirname $0)
+readonly PROGNAME="$(basename "$0")"
+readonly PROGDIR="/usr/local/opt/osx-theme"
 readonly VERSION=$(cat "$PROGDIR/VERSION.md")
 readonly TODAY=$(date +"%m-%d-%y")
 readonly ARGS="$@"
@@ -64,28 +63,29 @@ _usage() {
 }
 _print_help() {
 	cat <<- EOF
+
 	usage: $PROGNAME [options]
 
 	Switch the theme for all themeable applications
 
 	OPTIONS:
-	    -h --help              Show this help
-	    -t --test              Run unit test to check the program
-	    -v --version           Display dotfiles version
-	    --prefix               Display dotfiles install path. Default: /usr/local/opt/dotfiles
+    -h --help              Show this help
+    -t --test              Run unit test to check the program
+    -v --version           Display dotfiles version
+    --prefix               Display dotfiles install path. Default: $PROGDIR
 
 	Examples:
-	    Run all tests:
-	    $PROGNAME --test
+	Run all tests:
+    $PROGNAME --test
 
-	    Print current version:
-	    $PROGNAME --version
+	Print current version:
+    $PROGNAME --version
 
-	    Run:
-	    $PROGNAME
-	
+	Run:
+    $PROGNAME
+
 	More Information:
-	    Documentation can be found at https://github.com/chrisopedia/osx-theme
+    Documentation can be found at https://github.com/chrisopedia/osx-theme
 	EOF
 }
 _print_directory() {
@@ -95,9 +95,16 @@ _edit() {
 	cd "$PROGDIR" \
 	&& vim
 }
+_is_app_installed() {
+	local app=$1
+	if find "$HOME/Applications" -name "*$app*" &> /dev/null; then
+		return 0
+	fi
+	return 1
+}
 _is_valid_theme() {
 	local theme=$1
-	if $(find $THEMES_DIR -name "*$theme*") &> /dev/null; then
+	if find "$THEMES_DIR" -name "*$theme*" &> /dev/null; then
 		return 0
 	fi
 	return 1
@@ -132,7 +139,7 @@ cmdline() {
 	done
 
 	#Reset the positional parameters to the short options
-	eval set -- $args
+	eval set -- "$args"
 
 	while getopts ":ehptv" OPTION
 	do
@@ -181,109 +188,48 @@ set_style() {
 				;;
 		esac
 	done
-	echo $style
+	echo "$style"
 }
 set_theme() {
 	local theme=$DEFAULT_THEME
 	for arg in $ARGS;
 	do
-		_is_valid_theme $arg \
+		_is_valid_theme "$arg" \
 		&& theme=$arg
 	done
-	echo $theme
+	echo "$theme"
 }
 generate_theme() {
 	local theme=$1
 	# Create new theme files
-	bash -c $("$GENERATOR/bin/base16" "$THEMES_DIR/$theme") &> /dev/null
+	"$GENERATOR/bin/base16" "$THEMES_DIR/$theme" &> /dev/null
 }
 
 set_programs_theme() {
 	local theme=$1
 	local style=$2
-	# Alfred2
-	# open "$THEMES_OUTPUT/base16-$theme-$style.alfredappearance"
-	# Atom
-	# BBEdit
-	# Chrome Dev Tools
-	#rm -rf "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/*"
-	#ln -s "$THEMES_OUTPUT/chrome-devtools/base16-$theme.$style.css" "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/Custom.css"
-	# codemirror
-	# console2
-	# drracket
-	# emacs
-	# geany
-	# gedit
-	# gimp-palette
-	# gnome-terminal
-	# guake
-	# highlight.js
-	# idea
-	# ipython-notebook
-	# iterm2
-	open "$HOME/Applications/iTerm.app"
-	sleep 10
-	open "$THEMES_OUTPUT/iterm2/base16-$theme.$style.256.itermcolors"
-	# konsole
-	# marked2
-	rm -rf "$HOME/Library/Application Support/Marked/Custom CSS/*"
-	ln -s "$THEMES_OUTPUT/marked/base16-$theme.css" "$HOME/Library/Application Support/Marked/Custom CSS/"
-	# mate-terminal
-	# mintty
-	# mmdc2
-	# mou
-	# notepad-plus-plus
-	# osx color palette
-	rm -rf "$HOME/Library/*.clr"
-	ln -s "$THEMES_OUTPUT/osx-color-palette/base16-$theme.clr" "$HOME/Library/Colors/"
-	# prettify.js
-	# preview
-	# prism
-	# putty
-	# pygments
-	# qtcreator
-	# rainbow
-	# rouge
-	# secure-shell
-	# shell
-	# terminal-app
-	open "$THEMES_OUTPUT/terminal-app/base16-$theme.$style.256.terminal"
-	sleep 10
-	defaults write com.apple.terminal "Default Window Settings" -string "base16-$theme.$style.256"
-	defaults write com.apple.terminal "Startup Window Settings" -string "base16-$theme.$style.256"
-	# terminator
-	# termite
-	# textadept
-	# textmate
-	# vconsole
-	# vim
-	rm -rf "$HOME/.vim/settings/theme.vim"
-	echo "set background=${style}" >> "$HOME/.vim/settings/theme.vim"
-	echo "silent! colorscheme base16-$theme" >> "$HOME/.vim/settings/theme.vim"
-	# visual-studio
-	# windows-command-prompt
-	# xcode4
-	mkdir -p "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
-	rm -rf "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/*"
-	ln -s "$THEMES_OUTPUT/xcode4/base16-$theme.$style.dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/"
-	# xfce4-terminal
-	# xresources
-	# zathura
+	local files="$PROGDIR/opt/*"
+	local file
+	for file in $files
+	do
+		_is_app_installed "$file" \
+			&& source "$file" "$THEME_OUTPUT" "$theme" "$style"
+	done
 }
 
 main() {
-	cmdline $ARGS
+	cmdline "$ARGS"
 
 	local style=$(set_style)
 	local theme=$(set_theme)
 
-	if _is_valid_theme $theme; then
-		generate_theme $theme
+	if _is_valid_theme "$theme"; then
+		generate_theme "$theme"
 	else
 		_print_error "No such theme '$theme' found"
 		exit 1
 	fi
-	set_programs_theme $theme $style
+	set_programs_theme "$theme" "$style"
 }
 
 main
