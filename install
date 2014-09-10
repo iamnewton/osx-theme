@@ -67,6 +67,6 @@ git submodule update --recursive --init --quiet
 
 # Symlinks all files in bin/ directory
 printf "%s┃%s Symlinking %s/bin/* to /usr/local/bin/...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "$(tput sgr0)"
-ln -fs "${DIR}/bin/osx-theme" "/usr/local/bin/osx-theme"
+ln -fs "${DIR}/bin/${REPO}" "/usr/local/bin/${REPO}"
 
 [[ $? ]] && printf "%s✓ Success:%s %s has been installed.%s\n" "$(tput setaf 2)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "$(tput sgr0)"
