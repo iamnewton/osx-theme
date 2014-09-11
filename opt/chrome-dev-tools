@@ -4,9 +4,17 @@ set_chrome_dev_tools_theme() {
 	local dir=$1
 	local theme=$2
 	local style=$3
+	local dest="$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/"
 
-	rm -rf "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/*"
-	ln -s "${dir}/chrome-devtools/base16-${theme}.${style}.css" "$HOME/Library/Application Support/Google/Chrome/Default/User StyleSheets/Custom.css"
+	open -a "Google Chrome"
+	
+	if [[ ! -d "$dest" ]]; then
+		mkdir -p "$dest"
+	else
+		rm -rf "$dest/*"
+	fi
+
+	ln -s "${dir}/chrome-devtools/base16-${theme}.${style}.css" "$dest/Custom.css"
 }
 
 set_chrome_dev_tools_theme "$@"
