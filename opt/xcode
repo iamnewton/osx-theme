@@ -4,10 +4,15 @@ set_xcode_theme() {
 	local dir=$1
 	local theme=$2
 	local style=$3
+	local dest="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-	mkdir -p "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
-	rm -rf "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/*"
-	ln -s "${dir}/xcode4/base16-${theme}.${style}.dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/"
+	if [[ ! -d "$dest" ]]; then
+		mkdir -p "$dest"
+	else
+		rm -rf "$dest/*"
+	fi
+
+	ln -s "${dir}/xcode4/base16-${theme}.${style}.dvtcolortheme" "$dest/"
 }
 
 set_xcode_theme "$@"
