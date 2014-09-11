@@ -4,10 +4,11 @@ set_vim_theme() {
 	shift
 	local theme=$1
 	local style=$2
+	local dest="$HOME/.vim/settings/theme.vim"
 
-	rm -rf "$HOME/.vim/settings/theme.vim"
-	echo "set background=${style}" >> "$HOME/.vim/settings/theme.vim"
-	echo "silent! colorscheme base16-${theme}" >> "$HOME/.vim/settings/theme.vim"
+	rm -rf "$dest"
+	echo "set background=${style}" >> "$dest"
+	echo "silent! colorscheme base16-${theme}" >> "$dest"
 }
 
 set_vim_theme "$@"
