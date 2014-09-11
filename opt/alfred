@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set_alfred() {
+set_alfred_theme() {
 	local dir=$1
 	local theme=$2
 	local style=$3
