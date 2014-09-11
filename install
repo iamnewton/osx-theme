@@ -42,7 +42,7 @@ git remote add origin "https://github.com/${GITHUB_USER}/${REPO}.git"
 
 # Fetch all changes in repo from master
 printf "%s┃%s Downloading changes from origin...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
-git fetch --tags origin master
+git fetch origin master
 
 # Reset the index and working tree to the fetched HEAD
 # (submodules are cloned in the subsequent sync step)
