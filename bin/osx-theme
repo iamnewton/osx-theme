@@ -104,7 +104,7 @@ _is_app_installed() {
 }
 _is_valid_theme() {
 	local theme=$1
-	if find "$THEMES_DIR" -name "*$theme*" &> /dev/null; then
+	if [ -f "$THEMES_DIR/${theme}.yml" ]; then
 		return 0
 	fi
 	return 1
@@ -176,15 +176,14 @@ cmdline() {
 }
 
 set_style() {
-	local style
+	local style=$DEFAULT_STYLE
+	local arg
+
 	for arg in $ARGS;
 	do
 		case "$arg" in
 			dark|light)
 				style=$arg
-				;;
-			*)
-				style=$DEFAULT_STYLE
 				;;
 		esac
 	done
@@ -213,7 +212,7 @@ set_programs_theme() {
 	for file in $files
 	do
 		_is_app_installed "$file" \
-			&& source "$file" "$THEME_OUTPUT" "$theme" "$style"
+			&& bash "$file" "$THEME_OUTPUT" "$theme" "$style"
 	done
 }
 
@@ -223,12 +222,16 @@ main() {
 	local style=$(set_style)
 	local theme=$(set_theme)
 
-	if _is_valid_theme "$theme"; then
+	echo "style: $style"
+	echo "theme: $theme"
+
+	if _is_valid_theme "$theme" &> /dev/null; then
 		generate_theme "$theme"
 	else
 		_print_error "No such theme '$theme' found"
 		exit 1
 	fi
+
 	set_programs_theme "$theme" "$style"
 }
 
