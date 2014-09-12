@@ -222,9 +222,6 @@ main() {
 	local style=$(set_style)
 	local theme=$(set_theme)
 
-	echo "style: $style"
-	echo "theme: $theme"
-
 	if _is_valid_theme "$theme" &> /dev/null; then
 		generate_theme "$theme"
 	else
