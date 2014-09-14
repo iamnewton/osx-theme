@@ -11,7 +11,7 @@ set_xcode_theme() {
 	fi
 
 	rm -rf "$dest/*"
-	ln -s "${dir}/xcode4/base16-${theme}.${style}.dvtcolortheme" "$dest/base16-${theme}.${style}.dvtcolortheme"
+	ln "${dir}/xcode4/base16-${theme}.${style}.dvtcolortheme" "$dest/base16-${theme}.${style}.dvtcolortheme"
 }
 
 set_xcode_theme "$@"

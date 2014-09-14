@@ -3,7 +3,8 @@
 set_marked_theme() {
 	local dir=$1
 	local theme=$2
-	local dest="$HOME/Library/Application Support/Marked/Custom CSS"
+	local
+	dest="$HOME/Library/Containers/com.brettterpstra.marked2/Data/Library/Application Support/Marked 2/Custom CSS"
 
 	if [[ ! -d "$dest" ]]; then
 		mkdir -p "$dest"
