@@ -4,7 +4,7 @@ set_vim_theme() {
 	shift
 	local theme=$1
 	local style=$2
-	local dest="$HOME/.vim/settings/theme.vim"
+	local dest="$(dotfiles --prefix)/vim/settings/theme.vim"
 
 	rm -rf "$dest"
 	echo "set background=${style}" >> "$dest"

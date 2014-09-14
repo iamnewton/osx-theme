@@ -201,7 +201,7 @@ set_theme() {
 generate_theme() {
 	local theme=$1
 	# Create new theme files
-	"$GENERATOR/bin/base16" "$THEMES_DIR/$theme" &> /dev/null
+	"$GENERATOR/bin/base16" "$THEMES_DIR/${theme}.yml" &> /dev/null
 }
 
 set_programs_theme() {
@@ -212,7 +212,7 @@ set_programs_theme() {
 	for file in $files
 	do
 		_is_app_installed "$file" \
-			&& bash "$file" "$THEME_OUTPUT" "$theme" "$style"
+			&& bash "$file" "$THEMES_OUTPUT" "$theme" "$style"
 	done
 }
 

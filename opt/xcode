@@ -8,10 +8,9 @@ set_xcode_theme() {
 
 	if [[ ! -d "$dest" ]]; then
 		mkdir -p "$dest"
-	else
-		rm -rf "$dest/*"
 	fi
 
+	rm -rf "$dest/*"
 	ln -s "${dir}/xcode4/base16-${theme}.${style}.dvtcolortheme" "$dest/base16-${theme}.${style}.dvtcolortheme"
 }
 

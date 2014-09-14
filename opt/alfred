@@ -5,7 +5,7 @@ set_alfred_theme() {
 	local theme=$2
 	local style=$3
 
-	open "${dir}/base16-${theme}-${style}.alfredappearance"
+	open "${dir}/alfred/base16-${theme}-${style}.alfredappearance"
 }
 
-set_alfred_theme "$@"
+#set_alfred_theme "$@"
