@@ -11,7 +11,7 @@ set_marked_theme() {
 	fi
 
 	rm -rf "$dest/base16-*.css"
-	ln -s "${dir}/marked/base16-${theme}.css" "$dest/base16-${theme}.css"
+	mv "${dir}/marked/base16-${theme}.css" "$dest/base16-${theme}.css"
 }
 
 set_marked_theme "$@"

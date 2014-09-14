@@ -5,7 +5,7 @@ set_osx_color_palette_theme() {
 	local theme=$2
 
 	rm -rf "$HOME/Library/Colors/*.clr"
-	ln "${dir}/osx-color-palette/base16-${theme}.clr" "$HOME/Library/Colors/base16-${theme}.clr"
+	open "${dir}/osx-color-palette/base16-${theme}.clr"
 }
 
 set_osx_color_palette_theme "$@"
