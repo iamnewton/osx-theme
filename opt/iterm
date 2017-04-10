@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 set_iterm_theme() {
-	local dir=$1
-	local theme=$2
-	local style=$3
+	#local dir=$1
+	# local theme=$2
+	# local style=$3
 
 	open "$HOME/Applications/iTerm.app"
 	sleep 10
-	open "${dir}/iterm2/base16-${theme}.${style}.256.itermcolors"
+	# open "${dir}/iterm2/base16-${theme}.${style}.256.itermcolors"
+	open "../lib/seti.itermcolors"
 }
 
 set_iterm_theme "$@"
