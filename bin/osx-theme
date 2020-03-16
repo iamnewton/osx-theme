@@ -85,7 +85,7 @@ _print_help() {
     $PROGNAME
 
 	More Information:
-    Documentation can be found at https://github.com/chrisopedia/osx-theme
+    Documentation can be found at https://github.com/iamnewton/osx-theme
 	EOF
 }
 _print_directory() {

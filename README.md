@@ -9,7 +9,7 @@ osx-theme(1) is a [shell script][bin], so installation is simple.  [Download][do
 ## One-line installation
 
 ```bash
-$ bash -c "$(curl -#fL raw.github.com/chrisopedia/osx-theme/go/install)"
+$ bash -c "$(curl -#fL raw.github.com/iamnewton/osx-theme/go/install)"
 ```
 
 N.B. - using the one-line installation will download and install all of the dependencies.
@@ -71,10 +71,6 @@ If no theme is specified, it will use the default located at the top of the file
 * ~~xfce4-terminal~~
 * ~~xresources~~
 * ~~zathura~~
-
-## Contributing
-
-Suggestions and contributions are always welcome.  If you'd like to see a new profile, you can get involved by either [creating an issue](https://github.com/chrisopedia/osx-theme/issues/new), or [forking the code](https://github.com/chrisopedia/osx-theme/fork) and [creating a pull request](https://github.com/chrisopedia/osx-theme/compare/). For more information on how to work with the code, please see the [CONTRIBUTING.md](https://github.com/chrisopedia/osx-theme/blob/master/CONTRIBUTING.md) documentation.
 
 ## Acknowledgements
 
